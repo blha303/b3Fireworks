@@ -1,8 +1,9 @@
 name: GiveFireworks
 main: me.blha303.GiveFireworks
-version: 1
+version: 2
 commands:
   givefw:
+    description: Spawn fireworks
     usage: /givefw colors type special amount
     permission: command.givefw
     aliases: [gfw, fw]

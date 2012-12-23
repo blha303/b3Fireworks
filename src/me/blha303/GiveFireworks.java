@@ -16,7 +16,7 @@ public class GiveFireworks extends JavaPlugin {
 
 	public boolean onCommand(CommandSender sender, Command command,
 			String label, String[] args) {
-		if (args.length != 4) {
+		if (args.length < 3 || args.length > 4) {
 			return false;
 		}
 		if (sender instanceof Player) {
@@ -43,61 +43,119 @@ public class GiveFireworks extends JavaPlugin {
 
 	public ItemStack getFirework(String[] args) {
 		int i = 1;
+		int z = 0;
 		List<Color> c = new ArrayList<Color>();
 		String color = args[0];
-		if (color.contains("aqua"))
+		if (color.contains("aqua")) {
+			z += 1;
 			c.add(Color.AQUA);
-		else if (color.contains("black"))
+		}
+		if (color.contains("black")) {
+			z += 1;
 			c.add(Color.BLACK);
-		else if (color.contains("blue"))
+		}
+		if (color.contains("blue")) {
+			z += 1;
 			c.add(Color.BLUE);
-		else if (color.contains("fuchsia"))
+		}
+		if (color.contains("fuchsia")) {
+			z += 1;
 			c.add(Color.FUCHSIA);
-		else if (color.contains("gray"))
+		}
+		if (color.contains("gray")) {
+			z += 1;
 			c.add(Color.GRAY);
-		else if (color.contains("green"))
+		}
+		if (color.contains("green")) {
+			z += 1;
 			c.add(Color.GREEN);
-		else if (color.contains("lime"))
+		}
+		if (color.contains("lime")) {
+			z += 1;
 			c.add(Color.LIME);
-		else if (color.contains("maroon"))
+		}
+		if (color.contains("maroon")) {
+			z += 1;
 			c.add(Color.MAROON);
-		else if (color.contains("navy"))
+		}
+		if (color.contains("navy")) {
+			z += 1;
 			c.add(Color.NAVY);
-		else if (color.contains("olive"))
+		}
+		if (color.contains("olive")) {
+			z += 1;
 			c.add(Color.OLIVE);
-		else if (color.contains("orange"))
+		}
+		if (color.contains("orange")) {
+			z += 1;
 			c.add(Color.ORANGE);
-		else if (color.contains("purple"))
+		}
+		if (color.contains("purple")) {
+			z += 1;
 			c.add(Color.PURPLE);
-		else if (color.contains("red"))
-			c.add(Color.RED);
-		else if (color.contains("silver"))
-			c.add(Color.SILVER);
-		else if (color.contains("teal"))
-			c.add(Color.TEAL);
-		else if (color.contains("white"))
-			c.add(Color.WHITE);
-		else if (color.contains("yellow"))
-			c.add(Color.YELLOW);
-		else {
+		}
+		if (color.contains("red")) {
+			z += 1;
 			c.add(Color.RED);
 		}
+		if (color.contains("silver")) {
+			z += 1;
+			c.add(Color.SILVER);
+		}
+		if (color.contains("teal")) {
+			z += 1;
+			c.add(Color.TEAL);
+		}
+		if (color.contains("white")) {
+			z += 1;
+			c.add(Color.WHITE);
+		}
+		if (color.contains("yellow")) {
+			z += 1;
+			c.add(Color.YELLOW);
+		}
+		if (color.contains("christmas")) {
+			z += 1;
+			c.add(Color.RED);
+			c.add(Color.GREEN);
+			c.add(Color.WHITE);
+		}
+		if (z == 0) {
+			c.add(Color.RED);
+			c.add(Color.BLACK);
+			c.add(Color.YELLOW);
+		}
 
+		z = 0;
 		String type = args[1];
+		@SuppressWarnings("unused")
+		int power = 0;
 		FireworkEffect.Type t;
-		if ((type.isEmpty()) || (type.equalsIgnoreCase("ball")))
+		if ((type.isEmpty()) || (type.equalsIgnoreCase("ball"))) {
+			power = 1;
 			t = FireworkEffect.Type.BALL;
+		}
 		else if ((type.equalsIgnoreCase("large"))
-				|| (type.equalsIgnoreCase("largeball")))
+				|| (type.equalsIgnoreCase("largeball"))) {
+			power = 2;
 			t = FireworkEffect.Type.BALL_LARGE;
-		else if (type.equalsIgnoreCase("burst"))
+		}
+		else if (type.equalsIgnoreCase("burst")){
+			power = 3;
 			t = FireworkEffect.Type.BURST;
-		else if (type.equalsIgnoreCase("creeper"))
+		}
+		else if (type.equalsIgnoreCase("creeper")) {
+			power = 1;
 			t = FireworkEffect.Type.CREEPER;
-		else if (type.equalsIgnoreCase("star"))
+		}
+		else if (type.equalsIgnoreCase("star")) {
+			power = 3;
 			t = FireworkEffect.Type.STAR;
-		else
+		}
+		else {
+			power = 1;
 			t = FireworkEffect.Type.BALL;
+		}
 
 		boolean flicker = false;
 		boolean trail = false;
@@ -105,13 +163,13 @@ public class GiveFireworks extends JavaPlugin {
 
 		if (special.contains("trail"))
 			trail = true;
-		else if (special.contains("flicker")) {
+		if (special.contains("flicker"))
 			flicker = true;
-		}
 
-		if (args.length > 3) {
-			String amount = args[3];
-			i = Integer.parseInt(amount);
+		try {
+			i = Integer.parseInt(args[3]);
+		} catch (Exception e) {
+
 		}
 
 		FireworkEffect effect = FireworkEffect.builder().flicker(flicker)
@@ -119,6 +177,7 @@ public class GiveFireworks extends JavaPlugin {
 
 		ItemStack f = new ItemStack(401, i);
 		FireworkMeta fm = (FireworkMeta) f.getItemMeta();
+//		fm.setPower(power);
 		fm.setPower(2);
 		fm.addEffect(effect);
 		f.setItemMeta(fm);
