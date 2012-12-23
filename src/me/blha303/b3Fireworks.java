@@ -7,31 +7,60 @@ import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class GiveFireworks extends JavaPlugin {
+public class b3Fireworks extends JavaPlugin {
 
 	public boolean onCommand(CommandSender sender, Command command,
 			String label, String[] args) {
+		int i = 1;
 		if (args.length < 3 || args.length > 4) {
 			return false;
 		}
+		try {
+			i = Integer.parseInt(args[3]);
+		} catch (Exception e) { i = 1; }
+		
 		if (sender instanceof Player) {
 			Player p = (Player) sender;
-			if (!p.hasPermission("command.givefw")) {
-				p.sendMessage("You can't use this command.");
+			if (command.getLabel().equalsIgnoreCase("givefw")) {
+				if (!p.hasPermission("command.givefw")) {
+					p.sendMessage("You can't use this command.");
+					return true;
+				}
+				FireworkEffect fe = fwBuilder(args);
+				ItemStack f = new ItemStack(401, i);
+				FireworkMeta fm = (FireworkMeta) f.getItemMeta();
+				// fm.setPower(power);
+				fm.setPower(2);
+				fm.addEffect(fe);
+				f.setItemMeta(fm);
+				p.getInventory().addItem(f);
 				return true;
 			}
-			ItemStack i = getFirework(args);
-			p.getInventory().addItem(i);
-			return true;
+			if (command.getLabel().equalsIgnoreCase("launchfw")) {
+				if (!p.hasPermission("command.launchfw")) {
+					p.sendMessage("You can't use this command.");
+					return true;
+				}
+				FireworkEffect fe = fwBuilder(args);
+				Firework f = (Firework)p.getWorld().spawn(p.getLocation(), Firework.class);
+				FireworkMeta fm = (FireworkMeta) f.getFireworkMeta();
+				// fm.setPower(power);
+				fm.setPower(2);
+				fm.addEffect(fe);
+				f.setFireworkMeta(fm);
+				return true;
+			}
 		} else {
 			System.out.println("[GiveFireworks] Must be used by a player.");
 			return true;
 		}
+		return false;
 	}
 
 	// http://stackoverflow.com/a/2275030
@@ -41,8 +70,7 @@ public class GiveFireworks extends JavaPlugin {
 		return haystack.toLowerCase().contains(needle.toLowerCase());
 	}
 
-	public ItemStack getFirework(String[] args) {
-		int i = 1;
+	public FireworkEffect fwBuilder(String[] args) {
 		int z = 0;
 		List<Color> c = new ArrayList<Color>();
 		String color = args[0];
@@ -131,31 +159,18 @@ public class GiveFireworks extends JavaPlugin {
 		@SuppressWarnings("unused")
 		int power = 0;
 		FireworkEffect.Type t;
-		if ((type.isEmpty()) || (type.equalsIgnoreCase("ball"))) {
-			power = 1;
+		if ((type.isEmpty()) || (type.equalsIgnoreCase("ball")))
 			t = FireworkEffect.Type.BALL;
-		}
 		else if ((type.equalsIgnoreCase("large"))
-				|| (type.equalsIgnoreCase("largeball"))) {
-			power = 2;
+				|| (type.equalsIgnoreCase("largeball")))
 			t = FireworkEffect.Type.BALL_LARGE;
-		}
-		else if (type.equalsIgnoreCase("burst")){
-			power = 3;
+		else if (type.equalsIgnoreCase("burst"))
 			t = FireworkEffect.Type.BURST;
-		}
-		else if (type.equalsIgnoreCase("creeper")) {
-			power = 1;
+		else if (type.equalsIgnoreCase("creeper"))
 			t = FireworkEffect.Type.CREEPER;
-		}
-		else if (type.equalsIgnoreCase("star")) {
-			power = 3;
+		else if (type.equalsIgnoreCase("star"))
 			t = FireworkEffect.Type.STAR;
-		}
-		else {
-			power = 1;
-			t = FireworkEffect.Type.BALL;
-		}
+		else t = FireworkEffect.Type.BALL;
 
 		boolean flicker = false;
 		boolean trail = false;
@@ -166,22 +181,7 @@ public class GiveFireworks extends JavaPlugin {
 		if (special.contains("flicker"))
 			flicker = true;
 
-		try {
-			i = Integer.parseInt(args[3]);
-		} catch (Exception e) {
-
-		}
-
-		FireworkEffect effect = FireworkEffect.builder().flicker(flicker)
+		return FireworkEffect.builder().flicker(flicker)
 				.withColor(c).withFade(c).with(t).trail(trail).build();
-
-		ItemStack f = new ItemStack(401, i);
-		FireworkMeta fm = (FireworkMeta) f.getItemMeta();
-//		fm.setPower(power);
-		fm.setPower(2);
-		fm.addEffect(effect);
-		f.setItemMeta(fm);
-
-		return f;
 	}
 }
