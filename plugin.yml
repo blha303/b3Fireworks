@@ -16,4 +16,21 @@ commands:
     description: Spawn fireworks for another player
     usage: /givefwplayer playername colors type special amount
     permission: command.givefwplayer
-    aliases: [gfwp]
+    aliases: [gfwp
+permissions:
+  b3fireworks.*:
+    description: All commands from b3Fireworks
+    default: op
+    children:
+      command.givefw: true
+      command.launchfw: true
+      command.givefwplayer: true
+  command.givefw:
+    description: Allows players to use /givefw
+    default: op
+  command.launchfw:
+    description: Allows players to use /launchfw
+    default: op
+  command.givefwplayer:
+    description: Allows players to use /givefwplayer
+    default: op
