@@ -1,4 +1,4 @@
-package me.blha303;
+package me.blha303.Fireworks;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,6 +7,7 @@ import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -22,9 +23,15 @@ public class b3Fireworks extends JavaPlugin {
 			return false;
 		}
 		try {
-			i = Integer.parseInt(args[3]);
-		} catch (Exception e) { i = 1; }
-		
+			try {
+				i = Integer.parseInt(args[4]);
+			} catch (ArrayIndexOutOfBoundsException e1) {
+				i = Integer.parseInt(args[3]);
+			}
+		} catch (Exception e) {
+			i = 1;
+		}
+
 		if (sender instanceof Player) {
 			Player p = (Player) sender;
 			if (command.getLabel().equalsIgnoreCase("givefw")) {
@@ -32,28 +39,63 @@ public class b3Fireworks extends JavaPlugin {
 					p.sendMessage("You can't use this command.");
 					return true;
 				}
-				FireworkEffect fe = fwBuilder(args);
+				FireworkEffect fe = Build(args[0], args[1], args[2]);
+				if (p.getItemInHand().getTypeId() == 401) {
+					ItemStack f = p.getItemInHand();
+					FireworkMeta fm = (FireworkMeta) f.getItemMeta();
+					fm.addEffect(fe);
+					f.setItemMeta(fm);
+					p.sendMessage("Firework updated!");
+					return true;
+				}
 				ItemStack f = new ItemStack(401, i);
 				FireworkMeta fm = (FireworkMeta) f.getItemMeta();
-				// fm.setPower(power);
 				fm.setPower(2);
 				fm.addEffect(fe);
 				f.setItemMeta(fm);
 				p.getInventory().addItem(f);
+				if (i > 1) {
+					p.sendMessage("Here's your fireworks!");
+				} else {
+					p.sendMessage("Here's your firework!");
+				}
 				return true;
+			}
+			if (command.getLabel().equalsIgnoreCase("givefwplayer")) {
+				if (!p.hasPermission("command.givefwplayer")) {
+					p.sendMessage("You can't use this command.");
+					return true;
+				}
+				FireworkEffect fe = Build(args[1], args[2], args[3]);
+				Player dest = getServer().getPlayer(args[0]);
+				if (dest != null) {
+					if (dest.getItemInHand().getTypeId() == 401) {
+						ItemStack f = dest.getItemInHand();
+						FireworkMeta fm = (FireworkMeta) f.getItemMeta();
+						fm.addEffect(fe);
+						f.setItemMeta(fm);
+						p.sendMessage("Firework given to player!");
+						return true;
+					}
+				} else {
+					p.sendMessage(args[0]
+							+ " isn't a valid (online) player name");
+					return true;
+				}
 			}
 			if (command.getLabel().equalsIgnoreCase("launchfw")) {
 				if (!p.hasPermission("command.launchfw")) {
 					p.sendMessage("You can't use this command.");
 					return true;
 				}
-				FireworkEffect fe = fwBuilder(args);
-				Firework f = (Firework)p.getWorld().spawn(p.getLocation(), Firework.class);
+				FireworkEffect fe = Build(args[0], args[1], args[2]);
+				Firework f = (Firework) p.getWorld().spawnEntity(
+						p.getLocation(), EntityType.FIREWORK);
 				FireworkMeta fm = (FireworkMeta) f.getFireworkMeta();
-				// fm.setPower(power);
 				fm.setPower(2);
 				fm.addEffect(fe);
 				f.setFireworkMeta(fm);
+				p.sendMessage("Firework launched!");
 				return true;
 			}
 		} else {
@@ -70,10 +112,17 @@ public class b3Fireworks extends JavaPlugin {
 		return haystack.toLowerCase().contains(needle.toLowerCase());
 	}
 
-	public FireworkEffect fwBuilder(String[] args) {
+	/**
+	 * Takes three arguments: <br>
+	 * Color (can be multiple words concatenated. no spaces) <br>
+	 * Type (can be one of ball, large, burst, creeper, star) <br>
+	 * Special (can be trail or flicker, or both words. no spaces)<br>
+	 * More info at <a href="http://dev.bukkit.org/server-mods/b3Fireworks">the
+	 * project page</a>
+	 */
+	public FireworkEffect Build(String color, String type, String special) {
 		int z = 0;
 		List<Color> c = new ArrayList<Color>();
-		String color = args[0];
 		if (color.contains("aqua")) {
 			z += 1;
 			c.add(Color.AQUA);
@@ -155,7 +204,6 @@ public class b3Fireworks extends JavaPlugin {
 		}
 
 		z = 0;
-		String type = args[1];
 		@SuppressWarnings("unused")
 		int power = 0;
 		FireworkEffect.Type t;
@@ -170,18 +218,20 @@ public class b3Fireworks extends JavaPlugin {
 			t = FireworkEffect.Type.CREEPER;
 		else if (type.equalsIgnoreCase("star"))
 			t = FireworkEffect.Type.STAR;
-		else t = FireworkEffect.Type.BALL;
+		else
+			t = FireworkEffect.Type.BALL;
 
 		boolean flicker = false;
 		boolean trail = false;
-		String special = args[2];
 
 		if (special.contains("trail"))
 			trail = true;
 		if (special.contains("flicker"))
 			flicker = true;
 
-		return FireworkEffect.builder().flicker(flicker)
+		FireworkEffect fe = FireworkEffect.builder().flicker(flicker)
 				.withColor(c).withFade(c).with(t).trail(trail).build();
+
+		return fe;
 	}
 }
