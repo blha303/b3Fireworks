@@ -1,5 +1,5 @@
 name: b3Fireworks
-main: me.blha303.Fireworks.b3Fireworks
+main: b3suite.Fireworks.b3Fireworks
 version: 3.1
 commands:
   givefw:
@@ -16,7 +16,7 @@ commands:
     description: Spawn fireworks for another player
     usage: /givefwplayer playername colors type special amount
     permission: command.givefwplayer
-    aliases: [gfwp
+    aliases: [gfwp]
 permissions:
   b3fireworks.*:
     description: All commands from b3Fireworks

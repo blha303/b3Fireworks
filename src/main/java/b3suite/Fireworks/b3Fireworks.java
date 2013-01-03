@@ -1,4 +1,4 @@
-package me.blha303.Fireworks;
+package b3suite.Fireworks;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,20 +21,16 @@ public class b3Fireworks extends JavaPlugin {
 		int i = 1;
 		if (args.length < 3 || args.length > 4) {
 			return false;
-		}
-		try {
-			try {
-				i = Integer.parseInt(args[4]);
-			} catch (ArrayIndexOutOfBoundsException e1) {
-				i = Integer.parseInt(args[3]);
-			}
-		} catch (Exception e) {
-			i = 1;
-		}
+		} 
 
 		if (sender instanceof Player) {
 			Player p = (Player) sender;
 			if (command.getLabel().equalsIgnoreCase("givefw")) {
+				try {
+					i = Integer.parseInt(args[3]);
+				} catch (Exception e) {
+					i = 1;
+				}
 				if (!p.hasPermission("command.givefw")) {
 					p.sendMessage("You can't use this command.");
 					return true;
@@ -62,6 +58,8 @@ public class b3Fireworks extends JavaPlugin {
 				return true;
 			}
 			if (command.getLabel().equalsIgnoreCase("givefwplayer")) {
+				try { i = Integer.parseInt(args[4]); }
+				 catch (Exception e) { i = 1; }
 				if (!p.hasPermission("command.givefwplayer")) {
 					p.sendMessage("You can't use this command.");
 					return true;
@@ -84,6 +82,11 @@ public class b3Fireworks extends JavaPlugin {
 				}
 			}
 			if (command.getLabel().equalsIgnoreCase("launchfw")) {
+				try {
+					i = Integer.parseInt(args[3]);
+				} catch (Exception e) {
+					i = 1;
+				}
 				if (!p.hasPermission("command.launchfw")) {
 					p.sendMessage("You can't use this command.");
 					return true;
