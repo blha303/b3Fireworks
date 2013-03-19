@@ -1,6 +1,6 @@
 name: b3Fireworks
 main: b3suite.Fireworks.b3Fireworks
-version: 3.1
+version: 3.2
 commands:
   givefw:
     description: Spawn fireworks
